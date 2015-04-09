@@ -2,11 +2,11 @@
 A thread safe Minecraft server's RCON implementation for C# and Mono.
 
 Example usage: Change the "ABC" player's game mode
-```
+```C#
   using System;
   using MinecraftServerRCON;
   
-  namespace MonoTest
+  namespace RCONTest
   {
 	  class Program
 	  {

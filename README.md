@@ -17,6 +17,6 @@ Example usage: Change the "ABC" player's game mode
 	    		answer = rcon.sendMessage(RCONMessageType.Command, "gamemode creative ABC");
 	    		Console.WriteLine(answer.RemoveColorCodes());
 		}
-    	}
+	}
   }
 ```

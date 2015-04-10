@@ -4,12 +4,16 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace MinecraftServerRCON
 {
 	public sealed class RCONClient : IDisposable
 	{
-		private static readonly int timeoutSeconds = 10;
+		// Current servers like e.g. Spigot are not able to work async :(
+		private static readonly bool rconServerIsMultiThreaded = false;
+		
+		private static readonly int timeoutSeconds = 3;
 		private static readonly byte[] PADDING = new byte[] {0x0, 0x0};
 		public static readonly RCONClient INSTANCE = new RCONClient();
 		
@@ -81,12 +85,21 @@ namespace MinecraftServerRCON
 			return this.internalSendMessage(type, command).Answer;
 		}
 		
-		private RCONMessageAnswer internalSendMessage(RCONMessageType type, string command)
+		public void fireAndForgetMessage(RCONMessageType type, string command)
+		{
+			if(this.isInit == false)
+			{
+				return;
+			}
+			
+			this.internalSendMessage(type, command, true);
+		}
+		
+		private RCONMessageAnswer internalSendMessage(RCONMessageType type, string command, bool fireAndForget = false)
 		{
 			this.threadLock.EnterWriteLock();
 			
-			try
-			{
+			try {
 				var messageNumber = ++this.messageCounter;
 				
 				var msg = new List<byte>();
@@ -100,23 +113,18 @@ namespace MinecraftServerRCON
 				this.writer.Flush();
 				this.threadLock.ExitWriteLock();
 				
-				var sendTime = DateTime.UtcNow;
-				while (true)
+				if (fireAndForget && rconServerIsMultiThreaded)
 				{
-					var answer = this.rconReader.getAnswer(messageNumber);
-					if(answer == RCONMessageAnswer.EMPTY)
+					var id = messageNumber;
+					Task.Factory.StartNew(() =>
 					{
-						if((DateTime.UtcNow - sendTime).TotalSeconds > timeoutSeconds)
-						{
-							return RCONMessageAnswer.EMPTY;
-						}
-						
-						Thread.Sleep(100);
-						continue;
-					}
+						waitReadMessage(id);
+					});
 					
-					return answer;
+					return RCONMessageAnswer.EMPTY;
 				}
+				
+				return waitReadMessage(messageNumber);
 			}
 			catch
 			{
@@ -131,6 +139,27 @@ namespace MinecraftServerRCON
 				catch
 				{
 				}
+			}
+		}
+		
+		private RCONMessageAnswer waitReadMessage(int messageNo)
+		{
+			var sendTime = DateTime.UtcNow;
+			while (true)
+			{
+				var answer = this.rconReader.getAnswer(messageNo);
+				if(answer == RCONMessageAnswer.EMPTY)
+				{
+					if((DateTime.UtcNow - sendTime).TotalSeconds > timeoutSeconds)
+					{
+						return RCONMessageAnswer.EMPTY;
+					}
+					
+					Thread.Sleep(1);
+					continue;
+				}
+				
+				return answer;
 			}
 		}
 

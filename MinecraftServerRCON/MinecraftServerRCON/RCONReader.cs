@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace MinecraftServerRCON
 {
@@ -46,9 +47,8 @@ namespace MinecraftServerRCON
 		
 		private void readerThread()
 		{
-			new Thread(() => 
+			Task.Factory.StartNew(() =>
 			{
-			    Thread.CurrentThread.IsBackground = true; 
 			    while(true)
 			    {
 			    	if(this.isInit == false)
@@ -79,9 +79,9 @@ namespace MinecraftServerRCON
 			    		return;
 			    	}
 			    	
-			    	Thread.Sleep(100);
+			    	Thread.Sleep(1);
 			    }
-			}).Start();
+			}, TaskCreationOptions.LongRunning);
 		}
 		
 		#region IDisposable implementation

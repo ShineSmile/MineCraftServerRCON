@@ -1,5 +1,5 @@
 # MinecraftServerRCONSharp
-A thread safe Minecraft server's RCON implementation for C# and Mono.
+A thread-safe Minecraft server's RCON implementation for C# and Mono.
 
 Example usage: Change the "ABC" player's game mode
 ```C#
@@ -19,3 +19,6 @@ Example usage: Change the "ABC" player's game mode
 	}
   }
 ```
+
+## Setup
+The fasted way to use this library is to use NuGet: https://www.nuget.org/packages/RCONServer/. Further, you can also download the library from the [releases](https://github.com/SommerEngineering/MinecraftServerRCONSharp/releases) page.

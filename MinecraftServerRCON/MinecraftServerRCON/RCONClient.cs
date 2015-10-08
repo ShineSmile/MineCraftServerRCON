@@ -81,7 +81,7 @@ namespace MinecraftServerRCON
 					if (answer == RCONMessageAnswer.EMPTY)
 					{
 						this.isInit = false;
-						return;
+						throw new Exception("IPAddress or Password error!");
 					}
 				}
 
@@ -89,7 +89,6 @@ namespace MinecraftServerRCON
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("Exception while connecting: " + e.Message);
 				this.isInit = false;
 				this.isConfigured = false;
 				throw e;

@@ -127,8 +127,8 @@ namespace MinecraftServerRCON
 			var type = RCONMessageType.Login;
 			var messageNumber = ++this.messageCounter;
 			var msg = new List<byte>();
-			msg.AddRange(BitConverter.GetBytes(10 + command.Length));
-			msg.AddRange(BitConverter.GetBytes(messageNumber));
+			msg.AddRange(BitConverter.GetBytes(10 + Encoding.UTF8.GetByteCount(command)));
+            msg.AddRange(BitConverter.GetBytes(messageNumber));
 			msg.AddRange(BitConverter.GetBytes(type.Value));
 			msg.AddRange(ASCIIEncoding.UTF8.GetBytes(command));
 			msg.AddRange(PADDING);
@@ -156,14 +156,14 @@ namespace MinecraftServerRCON
 						this.internalDispose();
 						this.openConnection();
 					}
-					
-					// Build the message:
-					messageNumber = ++this.messageCounter;
+
+                    // Build the message:
+                    messageNumber = ++this.messageCounter;
 					var msg = new List<byte>();
-					msg.AddRange(BitConverter.GetBytes(10 + command.Length));
+					msg.AddRange(BitConverter.GetBytes(10 + Encoding.UTF8.GetByteCount(command)));
 					msg.AddRange(BitConverter.GetBytes(messageNumber));
 					msg.AddRange(BitConverter.GetBytes(type.Value));
-					msg.AddRange(ASCIIEncoding.UTF8.GetBytes(command));
+					msg.AddRange(Encoding.UTF8.GetBytes(command));
 					msg.AddRange(PADDING);
 					
 					// Write the message to the wire:

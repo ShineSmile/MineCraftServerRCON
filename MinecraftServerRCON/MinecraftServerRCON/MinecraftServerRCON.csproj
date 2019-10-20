@@ -45,12 +45,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RCONMessageAnswer.cs" />
-    <Compile Include="RCONMessageType.cs" />
-    <Compile Include="RCONClient.cs" />
-    <Compile Include="RCONReader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
